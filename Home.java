@@ -3,12 +3,16 @@ package Logining;
 import javax.swing.*;// all classes with j
 import java.awt.*;//color
 import java.awt.event.*;//action listener
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 //import java.sql.*;//result set packagr
 //import javax.swing.JOptionPane;
 // jabel displays image and text
         
 public class Home extends JFrame implements ActionListener
 { JMenuItem customerdetails;
+  JLabel statusLabel;
+  DateTimeFormatter statusTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy | hh:mm:ss a");
   
 public Home()
 { 
@@ -33,9 +37,36 @@ public Home()
         heading.setForeground(Color.RED);
         heading.setFont(new Font("Tahoma",Font.PLAIN,34));
         image.add(heading);
-       
         
-        JMenuBar menu=new JMenuBar();
+        JLabel subHeading = new JLabel("Choose an option to continue");
+        subHeading.setBounds(470, 70, 400, 30);
+        subHeading.setForeground(Color.WHITE);
+        subHeading.setFont(new Font("Tahoma", Font.BOLD, 20));
+        image.add(subHeading);
+        
+        JPanel quickActionsPanel = new JPanel(new GridLayout(2, 3, 20, 20));
+        quickActionsPanel.setBounds(280, 140, 850, 220);
+        quickActionsPanel.setOpaque(false);
+        image.add(quickActionsPanel);
+        
+        quickActionsPanel.add(createQuickActionButton("Customer details"));
+        quickActionsPanel.add(createQuickActionButton("Flight details"));
+        quickActionsPanel.add(createQuickActionButton("reservation"));
+        quickActionsPanel.add(createQuickActionButton("journey"));
+        quickActionsPanel.add(createQuickActionButton("cancellation"));
+        quickActionsPanel.add(createQuickActionButton("boarding pass"));
+        
+        statusLabel = new JLabel();
+        statusLabel.setBounds(40, screenSize.height - 140, 420, 30);
+        statusLabel.setForeground(Color.WHITE);
+        statusLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+        image.add(statusLabel);
+        updateStatusLabel();
+        Timer statusTimer = new Timer(1000, e -> updateStatusLabel());
+        statusTimer.start();
+       
+         
+         JMenuBar menu=new JMenuBar();
         setJMenuBar(menu);
         
         JMenu details=new JMenu("details");
@@ -80,6 +111,32 @@ public Home()
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // ✅ Only closes the current window
 
         setVisible(true);
+}
+
+private JButton createQuickActionButton(String label) {
+    JButton button = new JButton(label);
+    button.setForeground(Color.WHITE);
+    button.setBackground(new Color(0, 102, 204));
+    button.setFocusPainted(false);
+    button.setFont(new Font("Tahoma", Font.BOLD, 18));
+    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    button.addActionListener(this);
+    button.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            button.setBackground(new Color(0, 153, 255));
+        }
+        
+        @Override
+        public void mouseExited(MouseEvent e) {
+            button.setBackground(new Color(0, 102, 204));
+        }
+    });
+    return button;
+}
+
+private void updateStatusLabel() {
+    statusLabel.setText("Current time: " + LocalDateTime.now().format(statusTimeFormatter));
 }
 
 public void actionPerformed(ActionEvent ae) {
